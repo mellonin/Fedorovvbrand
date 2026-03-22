@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Fedorovv — мягкий минимализм</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,350;14..32,400;14..32,450;14..32,500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #fafaf8;
+            color: #2c2c2a;
+            font-family: 'Inter', sans-serif;
+            font-weight: 350;
+            line-height: 1.5;
+            scroll-behavior: smooth;
+        }
+
+        /* Плавные появления */
+        .scroll-reveal {
+            opacity: 0;
+            transform: translateY(35px);
+            transition: opacity 1s cubic-bezier(0.2, 0.9, 0.3, 1), transform 1s cubic-bezier(0.2, 0.9, 0.3, 1);
+        }
+        .scroll-reveal.revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Шапка */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 28px 0;
+            transition: all 0.5s cubic-bezier(0.2, 0.9, 0.4, 1);
+            background: rgba(250, 250, 248, 0);
+            backdrop-filter: blur(0px);
+        }
+        header.scrolled {
+            background: rgba(250, 250, 248, 0.75);
+            backdrop-filter: blur(12px);
+            padding: 18px 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 40px;
+        }
+
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Иконка корзины */
+        .cart-icon {
+            position: relative;
+            cursor: pointer;
+            font-size: 22px;
+            color: #2c2c2a;
+            transition: opacity 0.3s;
+        }
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -12px;
+            background: #2c2c2a;
+            color: #fafaf8;
+            font-size: 10px;
+            font-weight: 500;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Центральный логотип (фишка Acne Studios) */
+        .central-logo {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 200;
+            text-align: center;
+            transition: all 0.8s cubic-bezier(0.2, 0.9, 0.4, 1);
+            pointer-events: none;
+        }
+        .central-logo.hidden {
+            opacity: 0;
+            transform: translate(-50%, -70%);
+            pointer-events: none;
+        }
+        .central-logo h1 {
+            font-size: 64px;
+            font-weight: 400;
+            letter-spacing: -1px;
+            color: #2c2c2a;
+            margin-bottom: 12px;
+        }
+        .central-logo p {
+            font-size: 13px;
+            color: #9c9c98;
+            letter-spacing: 3px;
+            font-weight: 300;
+        }
+
+        /* Hero отступ, чтобы центральный логотип был виден */
+        .hero-spacer {
+            height: 100vh;
+        }
+
+        /* Основной контент, который появляется после скролла */
+        .main-content {
+            background: #fafaf8;
+            position: relative;
+            z-index: 50;
+            padding-top: 40px;
+        }
+
+        /* Секция товаров */
+        .section-header {
+            margin-bottom: 48px;
+            text-align: center;
+        }
+        .section-header h2 {
+            font-size: 28px;
+            font-weight: 400;
+            letter-spacing: -0.3px;
+            color: #2c2c2a;
+        }
+        .section-header p {
+            font-size: 14px;
+            color: #9c9c98;
+            margin-top: 8px;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 60px 40px;
+            margin-bottom: 100px;
+        }
+
+        .product-card {
+            cursor: pointer;
+            transition: all 0.5s cubic-bezier(0.2, 0.9, 0.4, 1);
+        }
+        .product-card:hover {
+            transform: translateY(-6px);
+        }
+        .image-wrapper {
+            background: rgba(0, 0, 0, 0.02);
+            border-radius: 24px;
+            aspect-ratio: 3 / 4;
+            overflow: hidden;
+            margin-bottom: 20px;
+            backdrop-filter: blur(2px);
+        }
+        .image-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.8s ease;
+            opacity: 0.9;
+        }
+        .product-card:hover img {
+            transform: scale(1.02);
+            opacity: 1;
+        }
+        .product-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 6px;
+        }
+        .product-name {
+            font-size: 16px;
+            font-weight: 400;
+            letter-spacing: -0.2px;
+        }
+        .product-price {
+            font-size: 15px;
+            font-weight: 400;
+            color: #5c5c58;
+        }
+        .add-to-cart {
+            margin-top: 12px;
+            font-size: 12px;
+            font-weight: 400;
+            letter-spacing: 1px;
+            background: transparent;
+            border: none;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+            padding-top: 12px;
+            width: 100%;
+            text-align: left;
+            color: #8c8c88;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        .add-to-cart:hover {
+            color: #2c2c2a;
+        }
+
+        /* О бренде */
+        .about-soft {
+            text-align: center;
+            max-width: 580px;
+            margin: 80px auto;
+            padding: 60px 0;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        .about-soft h3 {
+            font-size: 32px;
+            font-weight: 380;
+            margin-bottom: 20px;
+        }
+        .about-soft p {
+            color: #6c6c68;
+            font-size: 15px;
+            line-height: 1.7;
+        }
+
+        /* Модальное окно корзины */
+        .cart-modal {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 100%;
+            max-width: 480px;
+            height: 100%;
+            background: rgba(250, 250, 248, 0.96);
+            backdrop-filter: blur(20px);
+            z-index: 2000;
+            transform: translateX(100%);
+            transition: transform 0.5s cubic-bezier(0.2, 0.9, 0.4, 1);
+            box-shadow: -8px 0 30px rgba(0, 0, 0, 0.03);
+            padding: 28px;
+            display: flex;
+            flex-direction: column;
+        }
+        .cart-modal.open {
+            transform: translateX(0);
+        }
+        .cart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        .cart-items {
+            flex: 1;
+            overflow-y: auto;
+        }
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+        }
+        .cart-total {
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            font-weight: 450;
+        }
+        .checkout-btn {
+            background: #2c2c2a;
+            color: #fafaf8;
+            border: none;
+            padding: 16px;
+            font-size: 14px;
+            font-weight: 400;
+            letter-spacing: 1px;
+            margin-top: 24px;
+            cursor: pointer;
+            transition: opacity 0.3s;
+            width: 100%;
+        }
+        .close-cart {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #2c2c2a;
+        }
+        .order-form input, .order-form textarea {
+            width: 100%;
+            padding: 14px;
+            margin-top: 12px;
+            background: rgba(0, 0, 0, 0.02);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 48px 0;
+            color: #9c9c98;
+            font-size: 13px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 24px;
+            }
+            .central-logo h1 {
+                font-size: 42px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Иконка корзины в шапке -->
+<header id="header">
+    <div class="container">
+        <div class="nav">
+            <div></div> <!-- пусто для баланса -->
+            <div class="cart-icon" id="cartIcon">
+                <i class="fas fa-bag-shopping"></i>
+                <span class="cart-count" id="cartCount">0</span>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Центральный логотип (фишка Acne Studios) -->
+<div class="central-logo" id="centralLogo">
+    <h1>FEDOROVV</h1>
+    <p>СТРИТВИР • ТИШИНА</p>
+</div>
+
+<!-- Пустой блок, чтобы логотип был по центру экрана -->
+<div class="hero-spacer"></div>
+
+<!-- Основной контент -->
+<div class="main-content">
+    <div class="container">
+        <!-- Коллекция товаров -->
+        <div class="section-header scroll-reveal">
+            <h2>Коллекция 01</h2>
+            <p>лимитированный выпуск</p>
+        </div>
+
+        <div class="products-grid" id="productsGrid">
+            <div class="product-card scroll-reveal" data-id="1" data-name="Oversized Hoodie" data-price="12900">
+                <div class="image-wrapper">
+                    <img src="https://placehold.co/800x1067/f5f3ef/2c2c2a?text=HOODIE" alt="Hoodie">
+                </div>
+                <div class="product-info">
+                    <div class="product-name">Oversized Hoodie</div>
+                    <div class="product-price">₽12,900</div>
+                </div>
+                <button class="add-to-cart">+ добавить</button>
+            </div>
+            <div class="product-card scroll-reveal" data-id="2" data-name="Футболка M/01" data-price="4900">
+                <div class="image-wrapper">
+                    <img src="https://placehold.co/800x1067/f5f3ef/2c2c2a?text=TEE" alt="Tee">
+                </div>
+                <div class="product-info">
+                    <div class="product-name">Футболка M/01</div>
+                    <div class="product-price">₽4,900</div>
+                </div>
+                <button class="add-to-cart">+ добавить</button>
+            </div>
+            <div class="product-card scroll-reveal" data-id="3" data-name="Карго C/01" data-price="10500">
+                <div class="image-wrapper">
+                    <img src="https://placehold.co/800x1067/f5f3ef/2c2c2a?text=CARGO" alt="Cargo">
+                </div>
+                <div class="product-info">
+                    <div class="product-name">Карго C/01</div>
+                    <div class="product-price">₽10,500</div>
+                </div>
+                <button class="add-to-cart">+ добавить</button>
+            </div>
+        </div>
+
+        <!-- О бренде мягко -->
+        <div class="about-soft scroll-reveal">
+            <h3>FEDOROVV</h3>
+            <p>Тишина вместо шума. Мягкая архитектура формы. Каждая деталь существует не просто так. Две «V» в названии — код. Сделано с вниманием к материалу.</p>
+        </div>
+
+        <footer>
+            <p>studio@fedorovv.com / +7 (999) 123-45-67</p>
+            <p style="margin-top: 12px;">© 2025 FEDOROVV — независимый дом моды</p>
+        </footer>
+    </div>
+</div>
+
+<!-- Модальное окно корзины + оформление заказа -->
+<div class="cart-modal" id="cartModal">
+    <div class="cart-header">
+        <h3 style="font-weight: 400;">корзина</h3>
+        <button class="close-cart" id="closeCartBtn">✕</button>
+    </div>
+    <div class="cart-items" id="cartItemsList">
+        <div style="color: #aaa; text-align: center; padding: 40px 0;">Корзина пуста</div>
+    </div>
+    <div class="cart-total" id="cartTotalBlock">
+        <span>Итого</span>
+        <span id="cartTotalAmount">₽0</span>
+    </div>
+    
+    <!-- Форма заказа -->
+    <div class="order-form">
+        <input type="text" id="customerName" placeholder="Имя" style="margin-top: 20px;">
+        <input type="tel" id="customerPhone" placeholder="Телефон">
+        <textarea id="customerAddress" rows="2" placeholder="Адрес доставки"></textarea>
+        <button class="checkout-btn" id="checkoutBtn">оформить заказ</button>
+        <p style="font-size: 11px; color: #aaa; text-align: center; margin-top: 12px;">Оплата после подтверждения</p>
+    </div>
+</div>
+
+<script>
+    // Корзина
+    let cart = [];
+
+    function updateCartUI() {
+        const cartCount = document.getElementById('cartCount');
+        const cartItemsDiv = document.getElementById('cartItemsList');
+        const cartTotalSpan = document.getElementById('cartTotalAmount');
+        
+        const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+        cartCount.innerText = totalItems;
+        
+        if (cart.length === 0) {
+            cartItemsDiv.innerHTML = '<div style="color: #aaa; text-align: center; padding: 40px 0;">Корзина пуста</div>';
+            cartTotalSpan.innerText = '₽0';
+            return;
+        }
+        
+        let itemsHtml = '';
+        let total = 0;
+        cart.forEach((item, idx) => {
+            const itemTotal = item.price * item.quantity;
+            total += itemTotal;
+            itemsHtml += `
+                <div class="cart-item">
+                    <div>${item.name} x${item.quantity}</div>
+                    <div>₽${itemTotal.toLocaleString()}</div>
+                </div>
+            `;
+        });
+        cartItemsDiv.innerHTML = itemsHtml;
+        cartTotalSpan.innerText = `₽${total.toLocaleString()}`;
+    }
+
+    function addToCart(name, price, id) {
+        const existing = cart.find(item => item.id === id);
+        if (existing) {
+            existing.quantity++;
+        } else {
+            cart.push({ id, name, price, quantity: 1 });
+        }
+        updateCartUI();
+        
+        // легкая вибрация обратной связи
+        const btn = document.querySelector(`.product-card[data-id="${id}"] .add-to-cart`);
+        if(btn) btn.style.opacity = '0.6';
+        setTimeout(() => { if(btn) btn.style.opacity = '1'; }, 200);
+    }
+
+    // Обработчики добавления
+    document.querySelectorAll('.add-to-cart').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const card = btn.closest('.product-card');
+            const id = parseInt(card.dataset.id);
+            const name = card.dataset.name;
+            const price = parseInt(card.dataset.price);
+            addToCart(name, price, id);
+        });
+    });
+
+    // Корзина модалка
+    const cartModal = document.getElementById('cartModal');
+    const cartIcon = document.getElementById('cartIcon');
+    const closeCartBtn = document.getElementById('closeCartBtn');
+    
+    cartIcon.addEventListener('click', () => {
+        cartModal.classList.add('open');
+    });
+    closeCartBtn.addEventListener('click', () => {
+        cartModal.classList.remove('open');
+    });
+    
+    // Оформление заказа
+    const checkoutBtn = document.getElementById('checkoutBtn');
+    checkoutBtn.addEventListener('click', () => {
+        const name = document.getElementById('customerName').value.trim();
+        const phone = document.getElementById('customerPhone').value.trim();
+        const address = document.getElementById('customerAddress').value.trim();
+        
+        if (cart.length === 0) {
+            alert('Корзина пуста');
+            return;
+        }
+        if (!name || !phone || !address) {
+            alert('Пожалуйста, заполните все поля');
+            return;
+        }
+        
+        const order = {
+            items: cart,
+            customer: { name, phone, address },
+            total: cart.reduce((sum, i) => sum + (i.price * i.quantity), 0),
+            date: new Date().toLocaleString()
+        };
+        
+        console.log('Заказ:', order);
+        alert(`Спасибо, ${name}! Ваш заказ принят. Мы свяжемся с вами для подтверждения.`);
+        
+        // Очищаем корзину и форму
+        cart = [];
+        updateCartUI();
+        document.getElementById('customerName').value = '';
+        document.getElementById('customerPhone').value = '';
+        document.getElementById('customerAddress').value = '';
+        cartModal.classList.remove('open');
+    });
+
+    // Анимация появления
+    const revealElements = document.querySelectorAll('.scroll-reveal');
+    function checkReveal() {
+        revealElements.forEach(el => {
+            const rect = el.getBoundingClientRect();
+            if (rect.top < window.innerHeight - 80) {
+                el.classList.add('revealed');
+            }
+        });
+    }
+    window.addEventListener('scroll', checkReveal);
+    checkReveal();
+
+    // Фишка с центральным логотипом (исчезает при скролле)
+    const centralLogoDiv = document.getElementById('centralLogo');
+    const headerEl = document.getElementById('header');
+    window.addEventListener('scroll', () => {
+        const scrollY = window.scrollY;
+        if (scrollY > 80) {
+            centralLogoDiv.classList.add('hidden');
+            headerEl.classList.add('scrolled');
+        } else {
+            centralLogoDiv.classList.remove('hidden');
+            headerEl.classList.remove('scrolled');
+        }
+    });
+</script>
+</body>
+</html>
