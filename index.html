@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Fedorovv — Contemporary Streetwear</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #ffffff;
+            color: #111111;
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            line-height: 1.5;
+            scroll-behavior: smooth;
+        }
+
+        /* Анимации при скролле */
+        .scroll-reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.8s cubic-bezier(0.2, 0.9, 0.4, 1.1), transform 0.8s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+
+        .scroll-reveal.revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Прозрачная шапка */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 32px 0;
+            transition: all 0.4s ease;
+            background: transparent;
+        }
+
+        header.scrolled {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(12px);
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.02);
+        }
+
+        .container {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 0 48px;
+        }
+
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .logo {
+            font-size: 26px;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+            text-decoration: none;
+            color: #111111;
+            transition: opacity 0.3s;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 48px;
+        }
+
+        .nav-links a {
+            color: #111111;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+            transition: opacity 0.3s;
+            opacity: 0.7;
+        }
+
+        .nav-links a:hover {
+            opacity: 1;
+        }
+
+        /* Hero секция */
+        .hero {
+            min-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 120px 0 80px 0;
+            gap: 60px;
+        }
+
+        .hero h1 {
+            font-size: 110px;
+            font-weight: 600;
+            line-height: 0.95;
+            letter-spacing: -4px;
+            color: #111111;
+        }
+
+        .hero-sub {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            flex-wrap: wrap;
+            gap: 40px;
+            border-top: 1px solid #eaeaea;
+            padding-top: 40px;
+        }
+
+        .hero-description {
+            max-width: 500px;
+            font-size: 18px;
+            color: #666666;
+            line-height: 1.5;
+            font-weight: 400;
+        }
+
+        .hero-year {
+            font-size: 14px;
+            font-weight: 500;
+            color: #999999;
+            letter-spacing: 2px;
+        }
+
+        /* Секция товаров */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            flex-wrap: wrap;
+            margin-bottom: 56px;
+            border-bottom: 1px solid #eaeaea;
+            padding-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 28px;
+            font-weight: 500;
+            letter-spacing: -0.5px;
+        }
+
+        .section-link {
+            font-size: 13px;
+            font-weight: 500;
+            color: #999999;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .section-link:hover {
+            color: #111111;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 60px 40px;
+            margin-bottom: 120px;
+        }
+
+        .product-card {
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+
+        .product-card:hover {
+            transform: translateY(-8px);
+        }
+
+        .image-wrapper {
+            background: #f5f5f5;
+            aspect-ratio: 3 / 4;
+            overflow: hidden;
+            margin-bottom: 24px;
+            position: relative;
+        }
+
+        .image-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.8s ease;
+        }
+
+        .product-card:hover img {
+            transform: scale(1.03);
+        }
+
+        .product-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 8px;
+        }
+
+        .product-name {
+            font-size: 17px;
+            font-weight: 500;
+            letter-spacing: -0.2px;
+        }
+
+        .product-price {
+            font-size: 16px;
+            font-weight: 500;
+            color: #111111;
+        }
+
+        .product-category {
+            font-size: 13px;
+            color: #999999;
+            font-weight: 400;
+        }
+
+        /* Секция о бренде */
+        .about-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            margin: 100px 0;
+            align-items: center;
+        }
+
+        .about-text h2 {
+            font-size: 44px;
+            font-weight: 500;
+            letter-spacing: -1.5px;
+            line-height: 1.1;
+            margin-bottom: 32px;
+        }
+
+        .about-text p {
+            font-size: 17px;
+            color: #666666;
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+
+        .about-image {
+            background: #f5f5f5;
+            aspect-ratio: 4 / 5;
+            overflow: hidden;
+        }
+
+        .about-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Цитата */
+        .quote-section {
+            text-align: center;
+            padding: 80px 0;
+            border-top: 1px solid #eaeaea;
+            border-bottom: 1px solid #eaeaea;
+            margin: 60px 0;
+        }
+
+        .quote {
+            font-size: 32px;
+            font-weight: 400;
+            letter-spacing: -0.5px;
+            line-height: 1.3;
+            max-width: 800px;
+            margin: 0 auto 24px;
+            color: #111111;
+        }
+
+        .quote-author {
+            font-size: 13px;
+            color: #999999;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        /* Сетка преимуществ */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 60px;
+            margin: 80px 0;
+            text-align: center;
+        }
+
+        .feature h4 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .feature p {
+            font-size: 14px;
+            color: #666666;
+            line-height: 1.5;
+        }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid #eaeaea;
+            padding: 60px 0 48px;
+            margin-top: 60px;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 48px;
+        }
+
+        .footer-col h4 {
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+            color: #111111;
+        }
+
+        .footer-col p, .footer-col a {
+            color: #666666;
+            font-size: 14px;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 12px;
+            transition: color 0.3s;
+        }
+
+        .footer-col a:hover {
+            color: #111111;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 24px;
+        }
+
+        .social-links a {
+            font-size: 20px;
+            margin-bottom: 0;
+        }
+
+        .copyright {
+            margin-top: 40px;
+            padding-top: 40px;
+            border-top: 1px solid #eaeaea;
+            font-size: 13px;
+            color: #999999;
+            text-align: center;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 24px;
+            }
+            .hero h1 {
+                font-size: 48px;
+                letter-spacing: -2px;
+            }
+            .nav-links {
+                gap: 24px;
+            }
+            .about-section {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+            .features-grid {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+            .quote {
+                font-size: 24px;
+            }
+            .section-header {
+                flex-direction: column;
+                gap: 12px;
+            }
+        }
+
+        /* Дополнительные эффекты */
+        .hover-underline {
+            position: relative;
+        }
+
+        .hover-underline::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: #111111;
+            transition: width 0.3s ease;
+        }
+
+        .hover-underline:hover::after {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+<header id="header">
+    <div class="container">
+        <div class="nav">
+            <a href="#" class="logo">FEDOROVV</a>
+            <div class="nav-links">
+                <a href="#collection" class="hover-underline">Коллекция</a>
+                <a href="#about" class="hover-underline">О бренде</a>
+                <a href="#" class="hover-underline">Lookbook</a>
+                <a href="#" class="hover-underline">Контакты</a>
+            </div>
+        </div>
+    </div>
+</header>
+
+<main>
+    <div class="container">
+        <!-- Hero секция -->
+        <div class="hero scroll-reveal">
+            <h1>FEDOROVV<br>СТРИТВИР</h1>
+            <div class="hero-sub">
+                <div class="hero-description">
+                    Минимализм. Архитектура. Черный цвет как заявление. Сезон 01.
+                </div>
+                <div class="hero-year">СЕЗОН 2025</div>
+            </div>
+        </div>
+
+        <!-- Коллекция товаров -->
+        <div id="collection">
+            <div class="section-header scroll-reveal">
+                <div class="section-title">Коллекция 01</div>
+                <a href="#" class="section-link">Все модели →</a>
+            </div>
+            <div class="products-grid">
+                <div class="product-card scroll-reveal">
+                    <div class="image-wrapper">
+                        <img src="https://placehold.co/800x1067/f5f5f5/111111?text=FEDOROVV+HOODIE" alt="Fedorovv Hoodie">
+                    </div>
+                    <div class="product-info">
+                        <div class="product-name">Oversized Hoodie</div>
+                        <div class="product-price">₽12,900</div>
+                    </div>
+                    <div class="product-category">Лимитированная серия</div>
+                </div>
+                
+                <div class="product-card scroll-reveal">
+                    <div class="image-wrapper">
+                        <img src="https://placehold.co/800x1067/f5f5f5/111111?text=FEDOROVV+TEE" alt="Fedorovv T-shirt">
+                    </div>
+                    <div class="product-info">
+                        <div class="product-name">Футболка M/01</div>
+                        <div class="product-price">₽4,900</div>
+                    </div>
+                    <div class="product-category">Прямой крой</div>
+                </div>
+
+                <div class="product-card scroll-reveal">
+                    <div class="image-wrapper">
+                        <img src="https://placehold.co/800x1067/f5f5f5/111111?text=FEDOROVV+PANTS" alt="Fedorovv Pants">
+                    </div>
+                    <div class="product-info">
+                        <div class="product-name">Карго C/01</div>
+                        <div class="product-price">₽10,500</div>
+                    </div>
+                    <div class="product-category">Свободный крой</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Секция о бренде -->
+    <div class="container" id="about">
+        <div class="about-section scroll-reveal">
+            <div class="about-text">
+                <h2>Тишина<br>вместо шума</h2>
+                <p>FEDOROVV — это исследование границ между уличной функциональностью и архитектурной чистотой форм. Каждая деталь существует не просто так.</p>
+                <p>Две «V» в названии — не опечатка. Это код. Присмотрись к деталям. Сделано в России с уважением к материалу и носителю.</p>
+            </div>
+            <div class="about-image">
+                <img src="https://placehold.co/800x1000/f5f5f5/111111?text=FEDOROVV+VISUAL" alt="Fedorovv Visual">
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Цитата -->
+        <div class="quote-section scroll-reveal">
+            <div class="quote">
+                «Одежда не должна кричать. Она должна быть тихой, но заметной.»
+            </div>
+            <div class="quote-author">— Fedorovv, основатель бренда</div>
+        </div>
+
+        <!-- Преимущества -->
+        <div class="features-grid scroll-reveal">
+            <div class="feature">
+                <h4>Ручная сборка</h4>
+                <p>Каждое изделие собирается вручную с вниманием к каждой детали</p>
+            </div>
+            <div class="feature">
+                <h4>Лимитированные тиражи</h4>
+                <p>Никакого масс-маркета. Каждая модель существует в ограниченном количестве</p>
+            </div>
+            <div class="feature">
+                <h4>Премиальные материалы</h4>
+                <p>100% хлопок, японский деним, итальянская фурнитура</p>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer>
+            <div class="footer-col">
+                <h4>FEDOROVV</h4>
+                <p>Независимый дом моды<br>Основан в 2025</p>
+            </div>
+            <div class="footer-col">
+                <h4>Контакты</h4>
+                <p>studio@fedorovv.com</p>
+                <p>+7 (999) 123-45-67</p>
+                <p>Москва, Россия</p>
+            </div>
+            <div class="footer-col">
+                <h4>Социальные сети</h4>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-telegram"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-vk"></i></a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h4>Информация</h4>
+                <a href="#">Доставка и возврат</a>
+                <a href="#">Оферта</a>
+                <a href="#">Конфиденциальность</a>
+            </div>
+        </footer>
+        <div class="copyright">
+            © 2025 FEDOROVV. Все права защищены.
+        </div>
+    </div>
+</main>
+
+<script>
+    // Анимация при скролле
+    const revealElements = document.querySelectorAll('.scroll-reveal');
+    
+    const revealOnScroll = () => {
+        revealElements.forEach(el => {
+            const rect = el.getBoundingClientRect();
+            const windowHeight = window.innerHeight;
+            if (rect.top < windowHeight - 80) {
+                el.classList.add('revealed');
+            }
+        });
+    };
+    
+    window.addEventListener('scroll', revealOnScroll);
+    revealOnScroll();
+    
+    // Прозрачная шапка при скролле
+    const header = document.getElementById('header');
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 20) {
+            header.classList.add('scrolled');
+        } else {
+            header.classList.remove('scrolled');
+        }
+    });
+    
+    // Плавный скролл по якорям
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if(target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                // Закрываем мобильное меню если нужно
+            }
+        });
+    });
+</script>
+</body>
+</html>
