@@ -96,38 +96,38 @@
             font-family: 'Roboto Slab', serif;
         }
 
-        /* Hero с коллажем */
+        /* Hero с одной фотографией */
         .hero-section {
             position: relative;
             height: 100vh;
             overflow: hidden;
         }
 
-      .collage-bg {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 1;
-    background-size: cover;
-    background-position: center;
-    transition: transform 0.4s ease;
-}
+        /* Фон с твоей фотографией */
+        .collage-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            background-size: cover;
+            background-position: center;
+            transition: transform 0.4s ease;
+        }
 
-/* Затемнение поверх фото (чтобы текст читался) */
-.collage-bg::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.3);
-    pointer-events: none;
-}
+        /* Затемнение поверх фото */
+        .collage-bg::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.35);
+            pointer-events: none;
+        }
 
-        /* Белый оверлей, который появляется при скролле */
         .white-overlay {
             position: absolute;
             top: 0;
@@ -161,16 +161,17 @@
             font-size: 68px;
             font-weight: 400;
             letter-spacing: -1px;
-            color: #1e1e1c;
+            color: #ffffff;
             margin-bottom: 16px;
-            text-shadow: 0 0 20px rgba(250,250,248,0.5);
+            text-shadow: 0 0 30px rgba(0,0,0,0.5);
         }
         .central-logo p {
             font-size: 13px;
-            color: #4a4a46;
+            color: rgba(255,255,255,0.85);
             letter-spacing: 2px;
             font-family: 'Roboto Slab', serif;
             font-weight: 300;
+            text-shadow: 0 0 20px rgba(0,0,0,0.3);
         }
         .central-logo.hidden {
             opacity: 0;
@@ -255,7 +256,7 @@
             line-height: 1.7;
         }
 
-        /* Модальное окно корзины */
+        /* Корзина */
         .cart-modal {
             position: fixed;
             top: 0;
@@ -347,10 +348,6 @@
             .central-logo h1 {
                 font-size: 42px;
             }
-            .collage-bg {
-                grid-template-columns: repeat(2, 1fr);
-                grid-template-rows: repeat(4, 1fr);
-            }
         }
     </style>
 </head>
@@ -368,9 +365,10 @@
     </div>
 </header>
 
-<!-- Hero с коллажем -->
+<!-- Hero с одной фотографией CollageR.JPEG -->
 <div class="hero-section" id="heroSection">
-    <div class="collage-bg" id="collageBg" style="background-image: url('images/CollageR.JPEG'); background-size: cover; background-position: center;"></div>
+    <!-- Твоя фотография на фон -->
+    <div class="collage-bg" style="background-image: url('images/CollageR.JPEG');"></div>
     <div class="white-overlay" id="whiteOverlay"></div>
     <div class="central-logo" id="centralLogo">
         <h1>FEDOROVV</h1>
@@ -397,7 +395,7 @@
             </div>
         </div>
 
-        <!-- Новый текст о бренде -->
+        <!-- Текст о бренде -->
         <div class="about-soft scroll-reveal">
             <h3>FEDOROVV</h3>
             <p>Территория немых соглашений и безупречного вкуса. Закрытый круг тех, кто устал от поверхностного.</p>
@@ -432,7 +430,7 @@
     </div>
 </div>
 
-<!-- Страница товара (скрыта, показывается при клике) -->
+<!-- Страница товара -->
 <div id="productPage" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #fafaf8; z-index: 3000; overflow-y: auto; padding: 100px 40px 60px;">
     <div class="container" style="max-width: 1000px; margin: 0 auto;">
         <button id="closeProductBtn" style="position: fixed; top: 24px; right: 24px; background: none; border: none; font-size: 28px; cursor: pointer; z-index: 3001;">✕</button>
@@ -490,7 +488,7 @@
         
         let itemsHtml = '';
         let total = 0;
-        cart.forEach((item, idx) => {
+        cart.forEach((item) => {
             const itemTotal = item.price * item.quantity;
             total += itemTotal;
             itemsHtml += `<div class="cart-item"><div>${item.name} x${item.quantity}</div><div>₽${itemTotal.toLocaleString()}</div></div>`;
@@ -504,21 +502,19 @@
         if (existing) existing.quantity++;
         else cart.push({ id, name, price, quantity: 1 });
         updateCartUI();
+        alert('Добавлено в корзину');
     }
 
-    // Добавление из карточки товара
-    const productCard = document.getElementById('productCard');
+    // Добавление из страницы товара
     const addFromProductBtn = document.getElementById('addFromProductBtn');
-    
     if (addFromProductBtn) {
-        addFromProductBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
+        addFromProductBtn.addEventListener('click', () => {
             addToCart('Зип-худи NNFC', 5299, 1);
-            alert('Добавлено в корзину');
         });
     }
 
-    // Клик по карточке товара — открыть страницу товара
+    // Клик по карточке товара
+    const productCard = document.getElementById('productCard');
     const productPage = document.getElementById('productPage');
     const closeProductBtn = document.getElementById('closeProductBtn');
     
@@ -567,7 +563,7 @@
     window.addEventListener('scroll', checkReveal);
     checkReveal();
 
-    // Центральный логотип + затемнение коллажа
+    // Центральный логотип + затемнение
     const heroSection = document.getElementById('heroSection');
     const centralLogoDiv = document.getElementById('centralLogo');
     const headerEl = document.getElementById('header');
